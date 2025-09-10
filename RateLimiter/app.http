@@ -1,0 +1,9 @@
+@UrlShortener_HostAddress = http://localhost:5026
+
+### example
+GET {{UrlShortener_HostAddress}}/api/1
+Content-Type: application/json
+
+{
+  "longUrl": "https://example.com"
+}
