@@ -1,0 +1,13 @@
+@ChessDotCom_HostAddress = http://localhost:5026
+
+### Create a new game
+POST {{ChessDotCom_HostAddress}}/games/
+Content-Type: application/json
+{
+  "userId": 1,
+  "minRating": 1000,
+  "maxRating": 1500,
+}
+
+### Folow a game
+GET {{UrlShortener_HostAddress}}/games/1/moves
