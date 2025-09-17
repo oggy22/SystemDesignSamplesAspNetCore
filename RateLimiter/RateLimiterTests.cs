@@ -29,18 +29,21 @@ namespace RateLimiter.IntegrationTests
         }
 
         [Test]
-        public async Task FiveOK_and_Five429()
+        public async Task FiveOK_and_Five429_For2Users()
         {
-            for (int i = 0; i < 10; i++)
+            for (int userid=1; userid<=2; userid++)
             {
-                var response = await _client.GetAsync("/api/1");
-                if (i < 5)
+                for (int i = 0; i < 10; i++)
                 {
-                    Assert.That(response.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK));
-                }
-                else
-                {
-                    Assert.That(response.StatusCode, Is.EqualTo((System.Net.HttpStatusCode)429));
+                    var response = await _client.GetAsync($"/api/{userid}");
+                    if (i < 5)
+                    {
+                        Assert.That(response.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK));
+                    }
+                    else
+                    {
+                        Assert.That(response.StatusCode, Is.EqualTo((System.Net.HttpStatusCode)429));
+                    }
                 }
             }
         }

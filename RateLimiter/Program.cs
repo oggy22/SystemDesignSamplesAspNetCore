@@ -1,20 +1,22 @@
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
-TokenBucket tokenBucket = new TokenBucket(5, 0.5);
+TokenBucketCollection tokenBuckets = new TokenBucketCollection();
+tokenBuckets.Add(new TokenBucket(5, 0.5, 1)); // UserId 1
+tokenBuckets.Add(new TokenBucket(5, 0.5, 2)); // UserId 2
+tokenBuckets.Add(new TokenBucket(10, 0.5, 3)); // UserId 3
 
-app.MapGet("/api/{id}", async (HttpContext context, int id) =>
+// Real application will get userid from auth context or request header
+app.MapGet("/api/{userid}", async (HttpContext context, int userid) =>
 {
-    string userId = "1"; // For testing purposes, hardcoded userId
-
-    if (!tokenBucket.AllowRequest())
+    if (!tokenBuckets[userid].AllowRequest())
     {
         context.Response.StatusCode = StatusCodes.Status429TooManyRequests;
         return;
     }
 
     context.Response.StatusCode = StatusCodes.Status200OK;
-    await context.Response.WriteAsync($"Request {id} processed");
+    await context.Response.WriteAsync($"Request for userid={userid} processed");
 });
 
 app.Run();

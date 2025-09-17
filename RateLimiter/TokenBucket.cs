@@ -1,7 +1,8 @@
-﻿using System;
+﻿using System.Collections.ObjectModel;
 
 public class TokenBucket
 {
+    public int UserId { get; set; }
     private readonly int _capacity;          // Max tokens in bucket
     private readonly double _fillRatePerSec; // Tokens added per second
     private double _tokens;                  // Current token count
@@ -9,8 +10,9 @@ public class TokenBucket
 
     private readonly object _lock = new();
 
-    public TokenBucket(int capacity, double fillRatePerSec)
+    public TokenBucket(int capacity, double fillRatePerSec, int userId)
     {
+        UserId = userId;
         _capacity = capacity;
         _fillRatePerSec = fillRatePerSec;
         _tokens = capacity; // start full
@@ -45,4 +47,9 @@ public class TokenBucket
             return false;
         }
     }
+}
+
+public class TokenBucketCollection : KeyedCollection<int, TokenBucket>
+{
+    protected override int GetKeyForItem(TokenBucket item) => item.UserId;
 }
