@@ -3,7 +3,7 @@
 public class TokenBucket
 {
     public int UserId { get; set; }
-    private readonly int _capacity;          // Max tokens in bucket
+    public readonly int Limit;          // Max tokens in bucket
     private readonly double _fillRatePerSec; // Tokens added per second
     private double _tokens;                  // Current token count
     private DateTime _lastRefill;            // Last refill time
@@ -13,7 +13,7 @@ public class TokenBucket
     public TokenBucket(int capacity, double fillRatePerSec, int userId)
     {
         UserId = userId;
-        _capacity = capacity;
+        Limit = capacity;
         _fillRatePerSec = fillRatePerSec;
         _tokens = capacity; // start full
         _lastRefill = DateTime.UtcNow;
@@ -26,7 +26,7 @@ public class TokenBucket
         _lastRefill = now;
 
         var newTokens = elapsed * _fillRatePerSec;
-        _tokens = Math.Min(_capacity, _tokens + newTokens);
+        _tokens = Math.Min(Limit, _tokens + newTokens);
     }
 
     /// <summary>
@@ -47,6 +47,10 @@ public class TokenBucket
             return false;
         }
     }
+
+    public int Reset() { return (int)(Limit / _fillRatePerSec); }
+
+    public int Remaining() { lock (_lock) { Refill(); return (int)_tokens; } }
 }
 
 public class TokenBucketCollection : KeyedCollection<int, TokenBucket>
