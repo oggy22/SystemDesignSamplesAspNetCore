@@ -1,0 +1,4 @@
+@TicketMaster_HostAddress = http://localhost:5026
+
+### example
+POST {{TicketMaster_HostAddress}}/events/search?keyword=tyler
